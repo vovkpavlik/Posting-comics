@@ -7,6 +7,15 @@ import urllib3
 from comics import get_comics_urls, get_random_comics, save_photos
 
 
+class VKError(Exception):
+    pass
+
+
+def raise_for_error(response):
+    if response.get("error"):
+        raise VKError(response["error"]["error_msg"])
+
+
 def upload_url():
     params = {
         "access_token": access_token,
@@ -15,8 +24,9 @@ def upload_url():
     }
 
     base_url = "https://api.vk.com/method/"
-    response = requests.get(f"{base_url}photos.getWallUploadServer", params=params)
-    return response.json()["response"]["upload_url"]
+    response = requests.get(f"{base_url}photos.getWallUploadServer", params=params).json()
+    raise_for_error(response)
+    return response["response"]["upload_url"]
 
 
 def upload_vk_photos(upload_url, directory, pic):
@@ -24,13 +34,14 @@ def upload_vk_photos(upload_url, directory, pic):
         files = {
             "photo": file,
         }
-        response = requests.post(upload_url, files=files)
-    return response.json()
+        response = requests.post(upload_url, files=files).json()
+    raise_for_error(response)
+    return response
 
 
 def save_to_album(photos, hash, server, group_id):
     base_url = "https://api.vk.com/method/"
-    params ={
+    params = {
         "access_token": access_token,
         "v": 5.77,
         "photo": photos,
@@ -38,8 +49,9 @@ def save_to_album(photos, hash, server, group_id):
         "server": server,
         "group_id": group_id,
     }
-    response = requests.post(f"{base_url}photos.saveWallPhoto", data=params)
-    return response.json()
+    response = requests.post(f"{base_url}photos.saveWallPhoto", data=params).json()
+    raise_for_error(response)
+    return response
 
 
 def publish_comics(group_id, access_token, media_pic_id, owner_pic_id, message):
@@ -52,8 +64,9 @@ def publish_comics(group_id, access_token, media_pic_id, owner_pic_id, message):
         "message": message,
         "attachments": f"photo{owner_pic_id}_{media_pic_id}"
     }
-    response = requests.get(f"{base_url}wall.post", params=params)
-    return response.json()
+    response = requests.get(f"{base_url}wall.post", params=params).json()
+    raise_for_error(response)
+    return response
 
 
 if __name__ == '__main__':
@@ -75,15 +88,17 @@ if __name__ == '__main__':
 
     save_photos(get_random_comics(comics_urls)["img"], directory)
 
-    upload_vk_photos = upload_vk_photos(upload_url(), directory, "comics.png")
-    photos = upload_vk_photos["photo"]
-    hash = upload_vk_photos["hash"]
-    server = upload_vk_photos["server"]
+    load_vk_info = upload_vk_photos(upload_url(), directory, "comics.png")
+    photos = load_vk_info["photo"]
+    hash = load_vk_info["hash"]
+    server = "eUISWGH"
+    # server = load_vk_info["server"]
 
-    save_to_album = save_to_album(photos, hash, server, group_id)
-    owner_id = save_to_album["response"][0]["album_id"]
-    media_pic_id = save_to_album["response"][0]["id"]
-    owner_pic_id = save_to_album["response"][0]["owner_id"]
+    load_album_info = save_to_album(photos, hash, server, group_id)["response"][0]
+    owner_id = load_album_info["album_id"]
+    media_pic_id = load_album_info["id"]
+    owner_pic_id = load_album_info["owner_id"]
 
     publish_comics(group_id, access_token, media_pic_id, owner_pic_id, message)
+
     os.remove(f"{directory}/comics.png")
