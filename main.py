@@ -39,13 +39,13 @@ def upload_vk_photos(upload_url, directory, pic):
     return response
 
 
-def save_to_album(photos, hash, server, group_id):
+def save_to_album(photos, hash_, server, group_id):
     base_url = "https://api.vk.com/method/"
     params = {
         "access_token": access_token,
         "v": 5.77,
         "photo": photos,
-        "hash": hash,
+        "hash": hash_,
         "server": server,
         "group_id": group_id,
     }
@@ -87,18 +87,18 @@ if __name__ == '__main__':
     message = get_random_comics(comics_urls)["safe_title"]
 
     save_photos(get_random_comics(comics_urls)["img"], directory)
+    try:
+        load_vk_info = upload_vk_photos(upload_url(), directory, "comics.png")
+        photos = load_vk_info["photo"]
+        hash_ = load_vk_info["hash"]
+        server = load_vk_info["server"]
 
-    load_vk_info = upload_vk_photos(upload_url(), directory, "comics.png")
-    photos = load_vk_info["photo"]
-    hash = load_vk_info["hash"]
-    server = "eUISWGH"
-    # server = load_vk_info["server"]
+        load_album_info = save_to_album(photos, hash_, server, group_id)["response"][0]
+        owner_id = load_album_info["album_id"]
+        media_pic_id = load_album_info["id"]
+        owner_pic_id = load_album_info["owner_id"]
 
-    load_album_info = save_to_album(photos, hash, server, group_id)["response"][0]
-    owner_id = load_album_info["album_id"]
-    media_pic_id = load_album_info["id"]
-    owner_pic_id = load_album_info["owner_id"]
+        publish_comics(group_id, access_token, media_pic_id, owner_pic_id, message)
 
-    publish_comics(group_id, access_token, media_pic_id, owner_pic_id, message)
-
-    os.remove(f"{directory}/comics.png")
+    finally:
+        os.remove(f"{directory}/comics.png")
