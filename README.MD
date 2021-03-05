@@ -34,7 +34,7 @@ https://oauth.vk.com/authorize?client_id=1&display=page&scope=photos,groups,wall
 
 ___________________________________________
 
-9.Создайте проект в [_PyCharm_](https://www.jetbrains.com/pycharm/) или в ином интерпретаторе и каталоге проекта создайте файл `.env`. Внесите в этот файл:
+9.Создайте проект в [_PyCharm_](https://www.jetbrains.com/pycharm/) или в ином интерпретаторе и в каталоге проекта создайте файл `.env`. Внесите в этот файл:
 ```
     APP_ID=7776987=ID вашего приложения из п. 7.1
     ACCESS_TOKEN=ваш ключ подтверждения из п. 8
