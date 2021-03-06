@@ -86,7 +86,7 @@ if __name__ == '__main__':
     comics_urls = get_comics_urls("")
     message = get_random_comics(comics_urls)["safe_title"]
 
-    save_photos(get_random_comics(comics_urls)["img"], directory)
+    save_photos(get_random_comics(comics_urls)["img"], directory, "comics.png")
     try:
         load_vk_info = upload_vk_photos(upload_url(), directory, "comics.png")
         photos = load_vk_info["photo"]

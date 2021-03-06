@@ -18,8 +18,8 @@ def get_random_comics(comics_num):
     return response.json()
 
 
-def save_photos(url, directory):
+def save_photos(url, directory, pic):
     response = requests.get(url, verify=False)
     response.raise_for_status()
-    with open(f"{directory}/comics.png", "wb") as file:
+    with open(f"{directory}/{pic}", "wb") as file:
         file.write(response.content)
