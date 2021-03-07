@@ -81,7 +81,7 @@ if __name__ == '__main__':
     vk_group_id = env.str("VK_GROUP_ID")
     directory = "Files"
 
-    os.makedirs(directory)
+    os.makedirs(directory, exist_ok=True)
 
     comics_count = get_comics()["num"]
     random_comics = random.randint(1, comics_count)
@@ -91,15 +91,15 @@ if __name__ == '__main__':
 
     save_photo(comics_info["img"], directory, "comics.png")
     try:
-        load_vk_info = upload_vk_photos(get_upload_url(), directory, "comics.png")
-        photos = load_vk_info["photo"]
-        hash_ = load_vk_info["hash"]
-        server = load_vk_info["server"]
+        group_info = upload_vk_photos(get_upload_url(), directory, "comics.png")
+        photos = group_info["photo"]
+        hash_ = group_info["hash"]
+        server = group_info["server"]
 
-        load_album_info = save_to_album(photos, hash_, server, vk_group_id)["response"][0]
-        owner_id = load_album_info["album_id"]
-        media_pic_id = load_album_info["id"]
-        owner_pic_id = load_album_info["owner_id"]
+        album_info = save_to_album(photos, hash_, server, vk_group_id)["response"][0]
+        owner_id = album_info["album_id"]
+        media_pic_id = album_info["id"]
+        owner_pic_id = album_info["owner_id"]
 
         publish_comics(vk_group_id, vk_access_token, media_pic_id, owner_pic_id, message)
 
