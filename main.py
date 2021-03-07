@@ -17,7 +17,7 @@ def raise_for_error(response):
         raise VKError(response["error"]["error_msg"])
 
 
-def upload_url():
+def get_upload_url():
     params = {
         "access_token": vk_access_token,
         "v": 5.77,
@@ -92,7 +92,7 @@ if __name__ == '__main__':
 
     save_photo(comics_info["img"], directory, "comics.png")
     try:
-        load_vk_info = upload_vk_photos(upload_url(), directory, "comics.png")
+        load_vk_info = upload_vk_photos(get_upload_url(), directory, "comics.png")
         photos = load_vk_info["photo"]
         hash_ = load_vk_info["hash"]
         server = load_vk_info["server"]
