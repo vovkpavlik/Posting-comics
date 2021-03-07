@@ -77,12 +77,11 @@ if __name__ == '__main__':
     env.read_env()
     vk_app_id = env.str("VK_APP_ID")
 
-    if not os.path.isdir("Files"):
-        os.mkdir("Files")
-
     vk_access_token = env.str("VK_ACCESS_TOKEN")
     vk_group_id = env.str("VK_GROUP_ID")
     directory = "Files"
+
+    os.makedirs(directory)
 
     comics_count = get_comics()["num"]
     random_comics = random.randint(1, comics_count)
