@@ -1,7 +1,7 @@
-from environs import Env
 import os
 import random
 
+from environs import Env
 import requests
 import urllib3
 
