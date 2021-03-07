@@ -1,9 +1,9 @@
 import os
 import random
-import urllib3
 
 from environs import Env
 import requests
+import urllib3
 
 from comics import get_comics, save_photo
 
