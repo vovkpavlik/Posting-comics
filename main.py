@@ -1,10 +1,11 @@
 from environs import Env
 import os
+import random
 
 import requests
 import urllib3
 
-from comics import get_comics_urls, get_random_comics, save_photos
+from comics import get_comics, save_photo
 
 
 class VKError(Exception):
@@ -83,10 +84,13 @@ if __name__ == '__main__':
     group_id = env.str("GROUP_ID")
     directory = "Files"
 
-    comics_urls = get_comics_urls("")
-    message = get_random_comics(comics_urls)["safe_title"]
+    comics_count = get_comics()["num"]
+    random_comics = random.randint(1, comics_count)
+    comics_info = get_comics(random_comics)
 
-    save_photos(get_random_comics(comics_urls)["img"], directory, "comics.png")
+    message = comics_info["safe_title"]
+
+    save_photo(comics_info["img"], directory, "comics.png")
     try:
         load_vk_info = upload_vk_photos(upload_url(), directory, "comics.png")
         photos = load_vk_info["photo"]
