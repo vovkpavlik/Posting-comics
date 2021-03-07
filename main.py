@@ -19,7 +19,7 @@ def raise_for_error(response):
 
 def upload_url():
     params = {
-        "access_token": access_token,
+        "access_token": vk_access_token,
         "v": 5.77,
         "group_id": 202959616,
     }
@@ -43,7 +43,7 @@ def upload_vk_photos(upload_url, directory, pic):
 def save_to_album(photos, hash_, server, group_id):
     base_url = "https://api.vk.com/method/"
     params = {
-        "access_token": access_token,
+        "access_token": vk_access_token,
         "v": 5.77,
         "photo": photos,
         "hash": hash_,
@@ -75,13 +75,13 @@ if __name__ == '__main__':
 
     env = Env()
     env.read_env()
-    app_id = env.str("APP_ID")
+    vk_app_id = env.str("VK_APP_ID")
 
     if not os.path.isdir("Files"):
         os.mkdir("Files")
 
-    access_token = env.str("ACCESS_TOKEN")
-    group_id = env.str("GROUP_ID")
+    vk_access_token = env.str("VK_ACCESS_TOKEN")
+    vk_group_id = env.str("VK_GROUP_ID")
     directory = "Files"
 
     comics_count = get_comics()["num"]
@@ -97,12 +97,12 @@ if __name__ == '__main__':
         hash_ = load_vk_info["hash"]
         server = load_vk_info["server"]
 
-        load_album_info = save_to_album(photos, hash_, server, group_id)["response"][0]
+        load_album_info = save_to_album(photos, hash_, server, vk_group_id)["response"][0]
         owner_id = load_album_info["album_id"]
         media_pic_id = load_album_info["id"]
         owner_pic_id = load_album_info["owner_id"]
 
-        publish_comics(group_id, access_token, media_pic_id, owner_pic_id, message)
+        publish_comics(vk_group_id, vk_access_token, media_pic_id, owner_pic_id, message)
 
     finally:
         os.remove(f"{directory}/comics.png")
