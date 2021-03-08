@@ -17,11 +17,11 @@ def raise_for_error(response):
         raise VKError(response["error"]["error_msg"])
 
 
-def get_upload_url():
+def get_upload_url(group_id):
     params = {
         "access_token": vk_access_token,
         "v": 5.77,
-        "group_id": 202959616,
+        "group_id": group_id,
     }
 
     base_url = "https://api.vk.com/method/"
@@ -70,7 +70,7 @@ def publish_comics(group_id, access_token, media_pic_id, owner_pic_id, message):
     return response
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     urllib3.disable_warnings()
 
     env = Env()
@@ -84,22 +84,22 @@ if __name__ == '__main__':
     os.makedirs(directory, exist_ok=True)
 
     comics_count = get_comics()["num"]
-    random_comics = random.randint(1, comics_count)
-    comics_info = get_comics(random_comics)
+    random_number = random.randint(1, comics_count)
+    comics_description = get_comics(random_number)
 
-    message = comics_info["safe_title"]
+    message = comics_description["safe_title"]
 
-    save_photo(comics_info["img"], directory, "comics.png")
+    save_photo(comics_description["img"], directory, "comics.png")
     try:
-        group_info = upload_vk_photos(get_upload_url(), directory, "comics.png")
-        photos = group_info["photo"]
-        hash_ = group_info["hash"]
-        server = group_info["server"]
+        group_description = upload_vk_photos(get_upload_url(vk_group_id), directory, "comics.png")
+        photos = group_description["photo"]
+        hash_ = group_description["hash"]
+        server = group_description["server"]
 
-        album_info = save_to_album(photos, hash_, server, vk_group_id)["response"][0]
-        owner_id = album_info["album_id"]
-        media_pic_id = album_info["id"]
-        owner_pic_id = album_info["owner_id"]
+        album_description = save_to_album(photos, hash_, server, vk_group_id)["response"][0]
+        owner_id = album_description["album_id"]
+        media_pic_id = album_description["id"]
+        owner_pic_id = album_description["owner_id"]
 
         publish_comics(vk_group_id, vk_access_token, media_pic_id, owner_pic_id, message)
 
